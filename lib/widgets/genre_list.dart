@@ -32,7 +32,8 @@ class GenreList extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(screenWidth * 0.06),
               onTap: () {
-                // TODO: Update the selected genre and filter the anime list accordingly
+                // Laporkan genre yang ditekan ke atas
+                onGenreSelected?.call(genre);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(
@@ -40,9 +41,9 @@ class GenreList extends StatelessWidget {
                   vertical: screenHeight * 0.01,
                 ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(screenWidth *
-                      0.06),
-                  color: const Color(0xFF0b395e),
+                  borderRadius: BorderRadius.circular(screenWidth * 0.06),
+                  // Warna chip aktif vs tidak aktif
+                  color: isActive ? const Color(0xFF1976D2) : const Color(0xFF0b395e),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.3),
@@ -55,8 +56,7 @@ class GenreList extends StatelessWidget {
                   genre,
                   style: TextStyle(
                     fontSize: screenWidth * 0.04,
-                    color: isActive ? Colors.white :
-                    Colors.grey.shade600,
+                    color: isActive ? Colors.white : Colors.grey.shade600,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

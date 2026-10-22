@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../data/dummy_data.dart';
 import '../models/anime.dart';
 import '../providers/app_state_provider.dart';
-import '../widgets/anime_card.dart';
-import 'package:provider/provider.dart';
 import '../widgets/app_scaffold.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -19,18 +18,13 @@ class DetailScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final Anime? anime = DummyData.animeList
-        .cast<Anime?>()
-        .firstWhere(
-          (item) => item?.id == id,
-          orElse: () => null,
-        );
+    final Anime? anime = DummyData.animeList.cast<Anime?>().firstWhere(
+        (anime) => anime?.id == id,
+        orElse: () => null);
 
     if (anime == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Anime not found.'),
-        ),
+        appBar: AppBar(title: const Text('Anime Not Found')),
         body: const Center(
           child: Text('Anime tidak ditemukan.'),
         ),
@@ -60,10 +54,7 @@ class DetailScreen extends StatelessWidget {
                 ],
               ),
               child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                ),
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -73,10 +64,9 @@ class DetailScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    anime.imagePath,
-                    fit: BoxFit.cover,
-                  ),
+                  // Background image
+                  Image.asset(anime.imagePath, fit: BoxFit.cover),
+                  // Gradient overlay for better text visibility
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -91,6 +81,7 @@ class DetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Title at the bottom of the image
                   Positioned(
                     bottom: screenHeight * 0.02,
                     left: screenWidth * 0.04,
@@ -108,9 +99,7 @@ class DetailScreen extends StatelessWidget {
                               Shadow(
                                 offset: const Offset(0, 2),
                                 blurRadius: 4,
-                                color: Colors.black.withValues(
-                                  alpha: 0.7,
-                                ),
+                                color: Colors.black.withValues(alpha: 0.7),
                               ),
                             ],
                           ),
@@ -126,9 +115,7 @@ class DetailScreen extends StatelessWidget {
                               Shadow(
                                 offset: const Offset(0, 1),
                                 blurRadius: 2,
-                                color: Colors.black.withValues(
-                                  alpha: 0.7,
-                                ),
+                                color: Colors.black.withValues(alpha: 0.7),
                               ),
                             ],
                           ),
@@ -140,15 +127,16 @@ class DetailScreen extends StatelessWidget {
               ),
             ),
           ),
-
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(screenWidth * 0.04),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Rating, Episodes, dan Favorite
-                  Row(
+                  // Rating, Episodes, and Favorite info (Diubah dari Row ke Wrap agar tidak overflow)
+                  Wrap(
+                    spacing: screenWidth * 0.03, // Jarak horizontal antar widget
+                    runSpacing: screenHeight * 0.015, // Jarak vertikal jika turun baris
                     children: [
                       // Rating
                       Container(
@@ -162,39 +150,28 @@ class DetailScreen extends StatelessWidget {
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.3),
                               blurRadius: screenWidth * 0.02,
-                              offset: Offset(
-                                0,
-                                screenHeight * 0.005,
-                              ),
+                              offset: Offset(0, screenHeight * 0.005),
                             ),
                           ],
-                          borderRadius: BorderRadius.circular(
-                            screenWidth * 0.02,
-                          ),
+                          borderRadius: BorderRadius.circular(screenWidth * 0.02),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.white,
-                              size: screenWidth * 0.04,
-                            ),
+                            Icon(Icons.star,
+                                color: Colors.white, size: screenWidth * 0.04),
                             SizedBox(width: screenWidth * 0.01),
                             Text(
                               anime.rating,
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.035,
-                                fontWeight: FontWeight.w700,
-                              ),
+                                  color: Colors.white,
+                                  fontSize: screenWidth * 0.035,
+                                  fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
                       ),
-
-                      SizedBox(width: screenWidth * 0.03),
-
+                      
                       // Total Episodes
                       Container(
                         padding: EdgeInsets.symmetric(
@@ -202,42 +179,29 @@ class DetailScreen extends StatelessWidget {
                           vertical: screenHeight * 0.01,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0B395E),
+                          color: const Color(0xFF0b395e),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.3),
                               blurRadius: screenWidth * 0.02,
-                              offset: Offset(
-                                0,
-                                screenHeight * 0.005,
-                              ),
+                              offset: Offset(0, screenHeight * 0.005),
                             ),
                           ],
-                          borderRadius: BorderRadius.circular(
-                            screenWidth * 0.02,
-                          ),
+                          borderRadius: BorderRadius.circular(screenWidth * 0.02),
                         ),
                         child: Text(
                           '${anime.totalEpisodes} Episodes',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: screenWidth * 0.035,
-                            fontWeight: FontWeight.w700,
-                          ),
+                              color: Colors.white,
+                              fontSize: screenWidth * 0.035,
+                              fontWeight: FontWeight.w700),
                         ),
                       ),
 
-                      const Spacer(),
-
-                      // Favorite Button
+                      // Add to Favorites Button
                       Consumer<AppStateProvider>(
-                        builder: (
-                          context,
-                          favoriteProvider,
-                          child,
-                        ) {
-                          final isFavorite =
-                              favoriteProvider.isFavorite(anime.id);
+                        builder: (context, favoriteProvider, child) {
+                          final isFavorite = favoriteProvider.isFavorite(anime.id);
 
                           return GestureDetector(
                             onTap: () {
@@ -245,18 +209,14 @@ class DetailScreen extends StatelessWidget {
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                horizontal: screenWidth * 0.025,
+                                horizontal: screenWidth * 0.03,
                                 vertical: screenHeight * 0.01,
                               ),
                               decoration: BoxDecoration(
-                                color: isFavorite
-                                    ? Colors.grey.shade700
-                                    : Colors.redAccent,
+                                color: Colors.redAccent,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(
-                                      alpha: 0.3,
-                                    ),
+                                    color: Colors.black.withValues(alpha: 0.3),
                                     blurRadius: screenWidth * 0.02,
                                     offset: Offset(
                                       0,
@@ -278,12 +238,16 @@ class DetailScreen extends StatelessWidget {
                                     color: Colors.white,
                                     size: screenWidth * 0.04,
                                   ),
-                                  SizedBox(width: screenWidth * 0.01),
+                                  SizedBox(
+                                    width: screenWidth * 0.01,
+                                  ),
                                   Text(
-                                    isFavorite ? 'Added to favorite' : 'Add to favorite',
+                                    isFavorite
+                                        ? 'Added to Favorites'
+                                        : 'Add to Favorites',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: screenWidth * 0.03,
+                                      fontSize: screenWidth * 0.035,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -295,32 +259,24 @@ class DetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                  SizedBox(height: screenHeight * 0.03),
-
-                  // Synopsis
+                  SizedBox(height: screenHeight * 0.02),
+                  // Description
                   Text(
                     'Synopsis',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.05,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        color: Colors.white,
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.bold),
                   ),
-
                   SizedBox(height: screenHeight * 0.015),
-
-                  // Anime Description
                   Text(
                     anime.description,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: screenWidth * 0.038,
-                      height: 1.5,
-                    ),
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: screenWidth * 0.038,
+                        height: 1.5),
                     textAlign: TextAlign.justify,
                   ),
-
                   SizedBox(height: screenHeight * 0.03),
                 ],
               ),
